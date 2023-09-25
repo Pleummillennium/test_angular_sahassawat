@@ -1,0 +1,291 @@
+<nav class="bg-body-tertiary flex justify-end items-center px-20 py-10">
+  <div class="font-bold text-4xl">Test Angular</div>
+</nav>
+
+<div
+  class="h-screen flex flex-col justify-center items-center gap-4 bg-gray-300"
+>
+  <div class="xl:w-3/6 grid gap-4 mx-4">
+    <h1 class="font-bold text-3xl text-center">Submit Tax Filing</h1>
+    <div class="flex justify-center items-center gap-40">
+      <div class="flex flex-col items-center">
+        <div
+          [ngClass]="
+            review === false
+              ? '
+          bg-white border border-black h-10 w-10 rounded-full text-center font-semibold'
+              : 'bg-black border border-black h-10 w-10 rounded-full text-center font-semibold text-white'
+          "
+        >
+          1
+        </div>
+
+        <p>Input Detail</p>
+      </div>
+      <div class="flex flex-col items-center">
+        <div
+          class="bg-white border border-black h-10 w-10 rounded-full text-center font-semibold"
+        >
+          2
+        </div>
+        <p>Review & Confirm</p>
+      </div>
+    </div>
+    <ng-container *ngIf="review === false">
+      <form [formGroup]="formData">
+        <div class="card">
+          <!-- Tax Calculator -->
+          <div>
+            <h1 class="text-2xl font-semibold">1.Tax Calculator</h1>
+
+            <hr class="my-4 border border-2" />
+
+            <p>Type of filling <span class="text-red-500">*</span></p>
+            <div class="flex gap-10">
+              <label>
+                <input
+                  type="radio"
+                  name="filingType"
+                  value="0"
+                  checked
+                  (change)="selectedFiling('Ordinary Filing')"
+                />
+                Ordinary Filing
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="filingType"
+                  value="1"
+                  (change)="selectedFiling('Additional Filing')"
+                />
+                Additional Filing
+              </label>
+            </div>
+
+            <p>VAT Month<span class="text-red-500">*</span></p>
+            <div class="flex gap-10">
+              <select
+                class="dropdown"
+                id="month"
+                formControlName="month"
+                name="selectedMonth"
+              >
+                <option value="" disabled selected>Select months</option>
+                <option
+                  *ngFor="let month of months; let i = index"
+                  [value]="month"
+                  [disabled]="i > currentMonth"
+                >
+                  {{ month }}
+                </option>
+              </select>
+
+              <select
+                class="dropdown"
+                id="year"
+                formControlName="year"
+                name="selectedYear"
+              >
+                <option value="" disabled selected>Select years</option>
+                <option *ngFor="let year of years" [value]="year">
+                  {{ year }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tax Computation -->
+          <div>
+            <h1 class="text-2xl font-semibold">2.Tax Computation</h1>
+            <hr class="my-4 border border-2" />
+            <p class="font-semibold">
+              Provide total valuetaxable electronic service
+              <span class="text-red-500">*</span>
+            </p>
+            <ng-container *ngIf="selectFiling === 'Ordinary Filing'">
+              <div class="gap-4 grid">
+                <div class="input">
+                  <p>
+                    1.Total value of taxable electronic service exclusive of VAT
+                  </p>
+                  <input
+                    placeholder="THB"
+                    type="number"
+                    class="fieldInput"
+                    formControlName="value"
+                    (change)="calVat()"
+                  />
+                </div>
+                <div class="input">
+                  <p>2.Total VAT to be remitted (7% of 1.)</p>
+                  <input
+                    type="number"
+                    placeholder="THB"
+                    class="fieldInput"
+                    formControlName="vat"
+                  />
+                </div>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="selectFiling === 'Additional Filing'">
+              <div class="gap-4 grid">
+                <div class="input">
+                  <p>1.Underdeclared Thai texable electronic service</p>
+                  <input
+                    type="number"
+                    class="fieldInput"
+                    placeholder="THB"
+                    formControlName="value"
+                    (change)="calVat()"
+                  />
+                </div>
+                <div class="input">
+                  <p>2.Total VAT to be remitted (7% of 1.)</p>
+                  <input
+                    type="number"
+                    class="fieldInput"
+                    placeholder="THB"
+                    formControlName="vat"
+                  />
+                </div>
+
+                <p class="font-semibold py-4">
+                  In case of late filling and payment, or Additional filling
+                </p>
+
+                <div class="input">
+                  <p>3.Surcharge</p>
+                  <div class="inputReadOnly">
+                    <p class="fieldInputReadOnly">
+                      {{ formData.get("surcharge")?.value }}
+                      <span>THB</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="input">
+                  <p>4.Penalty</p>
+                  <div class="inputReadOnly">
+                    <p class="fieldInputReadOnly">
+                      {{ formData.get("penalty")?.value }}
+                      <span>THB</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="input">
+                  <div>
+                    <p>
+                      5.Total amount of Vat, Surcharge, and Penalty to be
+                      remitted
+                      <br />
+                      (2.+3.+4.)
+                    </p>
+                  </div>
+
+                  <div class="inputReadOnly">
+                    <p class="fieldInputReadOnly">
+                      {{ formData.get("taxAmount")?.value }}
+                      <span>THB</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </form>
+
+      <div class="gap-4 flex">
+        <button class="rounded-full border border-2 px-4 py-2 bg-white">
+          Back
+        </button>
+        <button
+          [ngClass]="
+            formData.valid &&
+            formData.get('value')?.value !== 0 &&
+            formData.get('vat')?.value !== 0
+              ? '
+          rounded-full border border-2 px-4 py-2 bg-black text-white'
+              : 'rounded-full border border-2 px-4 py-2 bg-white text-black'
+          "
+          (click)="nextReview()"
+        >
+          Next
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="review === true">
+      <div class="card">
+        <!-- Tax Calculator -->
+        <div>
+          <h1 class="text-2xl font-semibold">Tax filling Detail</h1>
+          <hr class="my-4 border border-2" />
+
+          <div class="grid grid-cols-4">
+            <p>Type of filling</p>
+            <p>{{ formData.get("filing")?.value }}</p>
+          </div>
+
+          <div class="grid grid-cols-4">
+            <p>VAT Month</p>
+            <p>{{ formData.get("month")?.value }}</p>
+          </div>
+        </div>
+
+        <!-- Tax Computation -->
+        <div>
+          <h1 class="text-2xl font-semibold">Tax Computation</h1>
+          <hr class="my-4 border border-2" />
+
+          <div class="gap-4 grid">
+            <div class="input">
+              <p>Total value of taxable electronic service exclusive of VAT</p>
+              <p class="inputReadOnly">
+                {{ formData.get("value")?.value }}
+                <span class="pl-4">THB</span>
+              </p>
+            </div>
+            <div class="input">
+              <p>
+                Total VAT to be remitted <br />
+                <span class="text-gray-400">
+                  (7% of Total value of taxable electronic service exclusive of
+                  VAT)
+                </span>
+              </p>
+              <p class="inputReadOnly">
+                {{ formData.get("vat")?.value }}
+                <span class="pl-4">THB</span>
+              </p>
+            </div>
+            <div class="input font-bold">
+              <p>Total Amount Payable</p>
+              <p class="inputReadOnly">
+                {{ formData.get("totalAmountPayable")?.value }}
+                <span class="pl-4">THB</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h1 class="text-2xl font-semibold">Declaration</h1>
+          <hr class="my-4 border border-2" />
+
+          <p>
+            I herebyy certify that information given above are true and correct
+            and agree to be bound by such information.
+          </p>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <button class="button" (click)="sendData()">Confirm and Submit</button>
+      </div>
+    </ng-container>
+  </div>
+</div>

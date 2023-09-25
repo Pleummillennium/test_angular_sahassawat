@@ -1,0 +1,32 @@
+.input {
+  @apply flex justify-between sm:items-center gap-4 flex-col sm:flex-row;
+}
+
+.fieldInput {
+  @apply text-end py-2 border border-black rounded-xl;
+  height: 40px;
+}
+
+.dropdown {
+  @apply border p-2 border-black rounded-xl;
+  height: 40px;
+}
+
+.inputReadOnly {
+  @apply flex justify-end items-center bg-gray-200 px-2 rounded-xl;
+  height: 40px;
+  min-width: 120px;
+}
+
+.fieldInputReadOnly {
+  @apply text-end py-2 w-full;
+  height: 40px;
+}
+
+.card {
+  @apply border border-4 border-black  p-10 rounded-xl bg-white grid gap-10;
+}
+
+.button {
+  @apply rounded-full border border-2 px-4 py-2 bg-black text-white;
+}
