@@ -81,8 +81,10 @@ export class InputDetailComponent {
 
   calVat() {
     let value = this.formData.get('value')?.value || 0;
+
     let penalty = this.formData.get('penalty')?.value || 0;
     let vat = value * 0.07;
+
     let surcharge = vat * 0.1;
     let taxAmount = vat + surcharge + penalty;
 
@@ -109,6 +111,6 @@ export class InputDetailComponent {
   }
 
   sendData() {
-    alert(JSON.stringify(this.formData.getRawValue()));
+    alert('Send Back-End : ' + JSON.stringify(this.formData.getRawValue()));
   }
 }

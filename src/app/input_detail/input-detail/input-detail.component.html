@@ -204,6 +204,13 @@
           Back
         </button>
         <button
+          [disabled]="
+            formData.valid &&
+            formData.get('value')?.value !== 0 &&
+            formData.get('vat')?.value !== 0
+              ? false
+              : true
+          "
           [ngClass]="
             formData.valid &&
             formData.get('value')?.value !== 0 &&
